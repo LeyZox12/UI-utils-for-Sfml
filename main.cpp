@@ -34,9 +34,10 @@ int main()
         cout << "error, couldnt load font.ttf";
     ui.font = font;
     ui.addButton(Vector2f(0,0),Vector2f(200,50), test, "testButton");
+    ui.addButton(Vector2f(0,50), Vector2f(200,50), test, "testbuttonColor", Color::Red, Color(150,0,0), Color::White);
     ui.addSlider(Vector2f(200,0), Vector2f(200,50), 200, false);
-    vector<string> testValues = {"1","4","5","4","3"};
-
+    vector<string> testValues = {"orange","apple","pear","cherry","strawberry"};
+    ui.addDropDown(Vector2f(400,0),Vector2f(200,50),testValues, 3);
     ui.addTextZone(Vector2f(600,0), Vector2f(200,50), 20);
     while(window.isOpen())
     {

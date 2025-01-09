@@ -14,13 +14,9 @@ class UIutils
 {
     public:
         Font font;
-        RenderWindow window;
-        static Vector2i mousepos;
         UIutils();
-        void setWindow(RenderWindow &window);
         struct textZone
         {
-
             RectangleShape textZoneRect;
             Text text;
             Font font;
@@ -40,7 +36,22 @@ class UIutils
                 txtSize = 20;
                 lineCharCount = 0;
             }
-            void updateShouldWrite(Vector2i mouspos)
+            bool rectVecCollision(Vector2i vec, RectangleShape rect)
+            {
+                return (rect.getPosition().x < vec.x &&
+                        rect.getPosition().x + rect.getSize().x > vec.x &&
+                        rect.getPosition().y < vec.y &&
+                        rect.getPosition().y + rect.getSize().y > vec.y);
+            }
+            string toString(int val)
+            {
+                stringstream stream;
+                stream<<val;
+                string strbuffer;
+                stream>>strbuffer;
+                return strbuffer;
+            }
+            void updateShouldWrite(Vector2i mousepos)
             {
                 if(rectVecCollision(mousepos, textZoneRect))
                     isWriting = true;
@@ -67,6 +78,7 @@ class UIutils
             }
             void display(RenderWindow& window)
             {
+                textZoneRect.setFillColor(rectColor);
                 textZoneRect.setPosition(pos);
                 textZoneRect.setSize(sizeRect);
                 window.draw(textZoneRect);
@@ -101,6 +113,21 @@ class UIutils
                 selectedColor = Color(150, 150, 150);
                 textColor = Color(255, 255, 255);
             }
+            bool rectVecCollision(Vector2i vec, RectangleShape rect)
+            {
+                return (rect.getPosition().x < vec.x &&
+                        rect.getPosition().x + rect.getSize().x > vec.x &&
+                        rect.getPosition().y < vec.y &&
+                        rect.getPosition().y + rect.getSize().y > vec.y);
+            }
+            string toString(int val)
+            {
+                stringstream stream;
+                stream<<val;
+                string strbuffer;
+                stream>>strbuffer;
+                return strbuffer;
+            }
             void onClick(Vector2i mousepos)
             {
                 if(rectVecCollision(mousepos, buttonRect))
@@ -118,8 +145,7 @@ class UIutils
                 buttonRect.setPosition(pos);
                 window.draw(buttonRect);
                 buttonName.setString(buttonNameStr);
-                Vector2f center = Vector2f(buttonRect.getSize().x / 2 - buttonName.getCharacterSize() * (buttonNameStr.size() / 2), 0);
-                buttonName.setPosition(pos + center);
+                buttonName.setPosition(pos);
                 buttonName.setFont(font);
                 buttonName.setFillColor(textColor);
                 window.draw(buttonName);
@@ -153,6 +179,21 @@ class UIutils
                 textColor = knobColor;
                 value = 0;
                 hasText = true;
+            }
+            bool rectVecCollision(Vector2i vec, RectangleShape rect)
+            {
+                return (rect.getPosition().x < vec.x &&
+                        rect.getPosition().x + rect.getSize().x > vec.x &&
+                        rect.getPosition().y < vec.y &&
+                        rect.getPosition().y + rect.getSize().y > vec.y);
+            }
+            string toString(int val)
+            {
+                stringstream stream;
+                stream<<val;
+                string strbuffer;
+                stream>>strbuffer;
+                return strbuffer;
             }
             void updateValue(Vector2i mousepos)
             {
@@ -201,6 +242,7 @@ class UIutils
             bool isDown = false;
             bool isSinglePage = true;
             int elementsAmount = 0;
+            int currentSelected = -1;
             Font font;
             Color rectColor;
             Color textColor;
@@ -213,6 +255,21 @@ class UIutils
                 elementsColor = Color(255,255,255);
                 selectedColor = Color(200,200,200);
             }
+            bool rectVecCollision(Vector2i vec, RectangleShape rect)
+            {
+                return (rect.getPosition().x < vec.x &&
+                        rect.getPosition().x + rect.getSize().x > vec.x &&
+                        rect.getPosition().y < vec.y &&
+                        rect.getPosition().y + rect.getSize().y > vec.y);
+            }
+            string toString(int val)
+            {
+                stringstream stream;
+                stream<<val;
+                string strbuffer;
+                stream>>strbuffer;
+                return strbuffer;
+            }
             void addElement(string name)
             {
                 RectangleShape defaultRect;
@@ -223,7 +280,7 @@ class UIutils
                 if(elementsAmount > maxPageElements)
                     isSinglePage = false;
             }
-            void scroll(int delta)
+            void scroll(int delta, Vector2i mousepos)
             {
                 if(getSelected(mousepos, false) == -1||
                         isSinglePage)
@@ -254,7 +311,6 @@ class UIutils
                         window.draw(name);
                     }
                 }
-                dropRect.setSize(Vector2f(sizeRect.x, sizeRect.y));
                 dropRect.setFillColor(rectColor);
                 dropRect.setPosition(pos);
                 window.draw(dropRect);
@@ -266,25 +322,31 @@ class UIutils
             }
             int getSelected(Vector2i mousepos, bool shouldSetVal)
             {
+
                 if(rectVecCollision(mousepos, dropRect) && shouldSetVal)
                 {
                     isDown = !isDown;
-                    return -1;
                 }
+
                 for(int i = offset; i < maxPageElements+offset; i++)
                 {
+                    elementsRects[i].setPosition(pos + Vector2f(0, (i-offset) * sizeRect.y + 5 + sizeRect.y));
                     if(i < elementsAmount &&
                             rectVecCollision(mousepos, elementsRects[i]) &&
                             isDown)
                     {
+
                         if(shouldSetVal)
                         {
                             value = elementsNames[i];
                             isDown = false;
+                            currentSelected = i;
                         }
                         return i;
                     }
                 }
+                if(shouldSetVal)
+                    currentSelected = -1;
                 return -1;
             }
         };
@@ -292,14 +354,19 @@ class UIutils
         vector<dropDown> dropDowns;
         vector<slider> sliders;
         vector<textZone> textZones;
-        static bool rectVecCollision(Vector2i vec, RectangleShape rect);
-        static string toString(int val);
+
         void addButton(Vector2f pos, Vector2f sizeRect, function<void()> command, string name);
         void addDropDown(Vector2f pos, Vector2f sizeRect, vector<string> elements, int maxElementPage);
         void addSlider(Vector2f pos, Vector2f sizeRect, float maxVal, bool hasKnob);
         void addTextZone(Vector2f pos, Vector2f sizeRect, int txtSize);
-        void updateElements(Event e);
-        void displayElements();
+        //Overloaded for custom colors
+        void addButton(Vector2f pos, Vector2f sizeRect, function<void()> command, string name, Color buttonColor, Color selectedColor, Color textColor);
+        void addDropDown(Vector2f pos, Vector2f sizeRect, vector<string> elements, int maxElementPage, Color baseColor, Color elementColor, Color textColor, Color selectedColor);
+        void addSlider(Vector2f pos, Vector2f sizeRect, float maxVal, bool hasKnob, Color backgroundColor, Color fillColor, Color textColor);
+        void addTextZone(Vector2f pos, Vector2f sizeRect, int txtSize, Color rectColor, Color textColor);
+
+        void updateElements(Event e, RenderWindow &window);
+        void displayElements(RenderWindow &window);
     protected:
 
     private:
