@@ -39,7 +39,7 @@ void UIutils::addDropDown(Vector2f pos, Vector2f sizeRect, vector<string> elemen
     newDropDown.maxPageElements = maxElementPage;
     dropDowns.push_back(newDropDown);
 }
-void UIutils::addSlider(Vector2f pos, Vector2f sizeRect, float maxVal, bool hasKnob)
+void UIutils::addSlider(Vector2f pos, Vector2f sizeRect, float maxVal, bool hasKnob, bool isValueFixed)
 {
     slider newSlider;
     newSlider.pos = pos;
@@ -47,6 +47,7 @@ void UIutils::addSlider(Vector2f pos, Vector2f sizeRect, float maxVal, bool hasK
     newSlider.backgroundRect.setPosition(pos);
     newSlider.backgroundRect.setSize(sizeRect);
     newSlider.maxValue = maxVal;
+    newSlider.isValueFixed = isValueFixed;
     newSlider.hasknob = hasKnob;
     newSlider.font = font;
     sliders.push_back(newSlider);
@@ -125,7 +126,7 @@ void UIutils::addDropDown(Vector2f pos, Vector2f sizeRect, vector<string> elemen
     newDropDown.maxPageElements = maxElementPage;
     dropDowns.push_back(newDropDown);
 }
-void UIutils::addSlider(Vector2f pos, Vector2f sizeRect, float maxVal, bool hasKnob, Color backgroundColor, Color fillColor, Color textColor)
+void UIutils::addSlider(Vector2f pos, Vector2f sizeRect, float maxVal, bool hasKnob, bool isValueFixed, Color backgroundColor, Color fillColor, Color textColor)
 {
     slider newSlider;
     newSlider.pos = pos;
@@ -134,6 +135,7 @@ void UIutils::addSlider(Vector2f pos, Vector2f sizeRect, float maxVal, bool hasK
     newSlider.backgroundRect.setSize(sizeRect);
     newSlider.maxValue = maxVal;
     newSlider.hasknob = hasKnob;
+    newSlider.isValueFixed = isValueFixed;
     newSlider.font = font;
     newSlider.backgroundColor = backgroundColor;
     newSlider.fillColor = fillColor;

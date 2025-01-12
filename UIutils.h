@@ -161,6 +161,7 @@ class UIutils
             Vector2f pos;
             bool hasknob;
             bool hasText;
+            bool isValueFixed;
             Font font;
             CircleShape knob;
             Color backgroundColor;
@@ -197,7 +198,7 @@ class UIutils
             }
             void updateValue(Vector2i mousepos)
             {
-                if(rectVecCollision(mousepos, backgroundRect))
+                if(rectVecCollision(mousepos, backgroundRect) && !isValueFixed)
                 {
                     ratioVal = sizeRect.x / maxValue;
                     float diffX = mousepos.x - backgroundRect.getPosition().x;
@@ -322,12 +323,10 @@ class UIutils
             }
             int getSelected(Vector2i mousepos, bool shouldSetVal)
             {
-
                 if(rectVecCollision(mousepos, dropRect) && shouldSetVal)
                 {
                     isDown = !isDown;
                 }
-
                 for(int i = offset; i < maxPageElements+offset; i++)
                 {
                     elementsRects[i].setPosition(pos + Vector2f(0, (i-offset) * sizeRect.y + 5 + sizeRect.y));
@@ -335,7 +334,6 @@ class UIutils
                             rectVecCollision(mousepos, elementsRects[i]) &&
                             isDown)
                     {
-
                         if(shouldSetVal)
                         {
                             value = elementsNames[i];
@@ -354,15 +352,14 @@ class UIutils
         vector<dropDown> dropDowns;
         vector<slider> sliders;
         vector<textZone> textZones;
-
         void addButton(Vector2f pos, Vector2f sizeRect, function<void()> command, string name);
         void addDropDown(Vector2f pos, Vector2f sizeRect, vector<string> elements, int maxElementPage);
-        void addSlider(Vector2f pos, Vector2f sizeRect, float maxVal, bool hasKnob);
+        void addSlider(Vector2f pos, Vector2f sizeRect, float maxVal, bool hasKnob, bool isValueFixed);
         void addTextZone(Vector2f pos, Vector2f sizeRect, int txtSize);
         //Overloaded for custom colors
         void addButton(Vector2f pos, Vector2f sizeRect, function<void()> command, string name, Color buttonColor, Color selectedColor, Color textColor);
         void addDropDown(Vector2f pos, Vector2f sizeRect, vector<string> elements, int maxElementPage, Color baseColor, Color elementColor, Color textColor, Color selectedColor);
-        void addSlider(Vector2f pos, Vector2f sizeRect, float maxVal, bool hasKnob, Color backgroundColor, Color fillColor, Color textColor);
+        void addSlider(Vector2f pos, Vector2f sizeRect, float maxVal, bool hasKnob, bool isValueFixed, Color backgroundColor, Color fillColor, Color textColor);
         void addTextZone(Vector2f pos, Vector2f sizeRect, int txtSize, Color rectColor, Color textColor);
 
         void updateElements(Event e, RenderWindow &window);
