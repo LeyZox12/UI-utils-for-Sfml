@@ -14,15 +14,6 @@ RenderWindow window(VideoMode(512,512), "UILib");
 UIutils ui;
 Event e;
 void test();
-/*
-0=>Button
-1=>Slider
-2=>Checkbox
-3=>Text
-4=>Drop⏬
-5=>Color picker
-*/
-
 
 void test()
 {
